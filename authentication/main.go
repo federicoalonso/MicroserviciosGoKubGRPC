@@ -20,7 +20,7 @@ var (
 )
 
 func init() {
-	flag.IntVar(&port, "port", 9015, "authentication service port")
+	flag.IntVar(&port, "port", 9016, "authentication service port")
 	flag.BoolVar(&local, "local", true, "run authentication service local")
 	flag.Parse()
 }
