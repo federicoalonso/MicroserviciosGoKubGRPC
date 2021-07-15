@@ -19,8 +19,8 @@ var (
 )
 
 func init() {
-	flag.IntVar(&port, "port", 9015, "api service port")
-	flag.StringVar(&authAddr, "auth_addr", "localhost:9017", "authentication service address")
+	flag.IntVar(&port, "port", 9016, "api service port")
+	flag.StringVar(&authAddr, "auth_addr", "localhost:9015", "authentication service address")
 	flag.Parse()
 }
 func main() {
