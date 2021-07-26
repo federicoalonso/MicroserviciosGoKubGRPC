@@ -6,6 +6,7 @@ import (
 	"microservicios/authentication/repository"
 	"microservicios/authentication/validators"
 	"microservicios/pb"
+	"microservicios/security"
 	"strings"
 	"time"
 
@@ -23,6 +24,10 @@ func NewAuthService(usersRepositoy repository.UsersRepository) pb.AuthServiceSer
 
 func (s *authService) SignUp(ctx context.Context, req *pb.User) (*pb.User, error) {
 	err := validators.ValidateSignUp(req)
+	if err != nil {
+		return nil, err
+	}
+	req.Password, err = security.EncryptPassword(req.Password)
 	if err != nil {
 		return nil, err
 	}
