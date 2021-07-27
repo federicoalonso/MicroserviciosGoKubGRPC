@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"log"
 	"microservicios/authentication/models"
 	"microservicios/authentication/repository"
 	"microservicios/authentication/validators"
@@ -47,6 +48,29 @@ func (s *authService) SignUp(ctx context.Context, req *pb.User) (*pb.User, error
 		return nil, err
 	}
 	return nil, validators.ErrEmailAlreadyExists
+}
+
+func (s *authService) SignIn(ctx context.Context, req *pb.SignInRequest) (*pb.SignInResponse, error) {
+
+	req.Email = validators.NormalizaEmail(req.Email)
+	user, err := s.usersRepository.GetByEmail(req.Email)
+	if err != nil {
+		log.Println("signin failed:", err.Error())
+		return nil, validators.ErrSignInFaied
+	}
+	err = security.VerifyPassword(user.Password, req.Password)
+	if err != nil {
+		log.Println("signin failed:", err.Error())
+		return nil, validators.ErrSignInFaied
+	}
+
+	token, err := security.NewToken(user.Id.Hex())
+	if err != nil {
+		log.Println("signin failed:", err.Error())
+		return nil, validators.ErrSignInFaied
+	}
+
+	return &pb.SignInResponse{User: user.ToProtoBuffer(), Token: token}, nil
 }
 
 func (s *authService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
